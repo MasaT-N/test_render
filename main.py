@@ -9,7 +9,7 @@ def hello():
 @app.route('/post_data', methods=['GET', 'POST'])
 def check():
     if request.method == 'POST':
-        data = request.json['key']
+        data = f"POSTデータは「{request.json['key']}」です！"
     else:
         data = 'no data'
     return data
