@@ -57,7 +57,6 @@ def insert_data(data):
             i_data.setdefault('amount',data['contents']['fid3']['value'])
             i_data.setdefault('flow_status',data['flow_status'])
             i_data.setdefault('end_date',data['end_date'])
-            i_data.setdefault('process_id',data['process_id'])
 
             # データをタプル型変数に格納する
             insert_tuple = tuple(i_data.values()) + (json.dumps(data,ensure_ascii=False), ) 
