@@ -12,13 +12,20 @@
   <body>
     
     <div class="container">
-        <h1>決裁情報一覧</h1>
+        <div class="d-flex justify-content-between bd-highlight mb-2">
+            <div class="p-2 bd-highlight"><h1>決裁情報一覧</h1></div>
+            {% if purchase_requisition_count %}
+                <div class="p-2 bd-highlight"><span class="badge bg-primary">総登録数：{{ purchase_requisition_count }}件</span></div>
+            {% endif %}
+        </div>
+        
       <table class="table table-striped">
         <thead>
           <tr>
             <th scope="col">ID</th>
             <th scope="col">申請内容</th>
             <th scope="col">担当者</th>
+            <th scope="col">担当工場</th>
             <th scope="col">担当部門</th>    
             <th scope="col">決裁日時</th>
           </tr>
@@ -30,6 +37,7 @@
               <th scope="row">{{ purchase_requisition['document_id'] }}</th>
               <td>{{ purchase_requisition['document_title'] }}</td>
               <td>{{ purchase_requisition['request_user'] }}</td>
+              <td>{{ purchase_requisition['request_factory'] }}</td>
               <td>{{ purchase_requisition['request_group'] }}</td>
               <td>{{ purchase_requisition['end_date'] }}</td>      
             </tr>    

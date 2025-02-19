@@ -13,7 +13,8 @@ database_url = os.environ.get('DATABASE_URL')
 @app.route("/")
 def hello():
     purchase_requisitions = get_purchase_requisition_list() 
-    return render_template('index.html', purchase_requisitions=purchase_requisitions)
+    purchase_requisition_count = get_purchase_requisition_count()
+    return render_template('index.html', purchase_requisitions=purchase_requisitions, purchase_requisition_count = purchase_requisition_count)
 
 @app.route('/post_data', methods=['GET', 'POST'])
 def check():
@@ -144,8 +145,20 @@ def get_purchase_requisition_list():
             td = datetime.timedelta(hours=9)
             for row in res:
                 row['end_date'] = (row['end_date'] + td).strftime("%Y-%m-%d %H:%M:%S")
-
             return res 
+        
+def get_purchase_requisition_count():
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=DictCursor) as cur:
+            setting = read_setting('setting.yaml')
+            strSQL = f"""
+                Select
+                    count(*)
+                from purchase_requisition;
+            """
+            cur.execute(strSQL)
+            res = cur.fetchone()
+            return res[0]         
 
 def read_setting(yaml_path):
     with open(yaml_path,'r',encoding='utf-8') as f:       
