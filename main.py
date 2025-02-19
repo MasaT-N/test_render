@@ -1,7 +1,9 @@
-from flask import Flask,request, jsonify
+from flask import Flask,request, jsonify,render_template
 import json
 import psycopg2
 from psycopg2.extras import DictCursor
+import yaml
+import datetime
 
 import os
 
@@ -10,7 +12,8 @@ database_url = os.environ.get('DATABASE_URL')
 
 @app.route("/")
 def hello():
-    return "Hello World!"
+    purchase_requisitions = get_purchase_requisition_list() 
+    return render_template('index.html', purchase_requisitions=purchase_requisitions)
 
 @app.route('/post_data', methods=['GET', 'POST'])
 def check():
@@ -116,6 +119,37 @@ def insert_data(data):
                 """
             strSQL = strSQL % insert_tuple
             cur.execute(strSQL)
+
+def get_purchase_requisition_list():
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=DictCursor) as cur:
+            setting = read_setting('setting.yaml')
+            strSQL = f"""
+                Select
+                    document_id, 
+                    document_number, 
+                    document_title, 
+                    request_user, 
+                    request_group, 
+                    request_factory, 
+                    amount, 
+                    flow_status, 
+                    end_date
+                from purchase_requisition
+                order by end_date desc
+                limit {setting['limit']};
+            """
+            cur.execute(strSQL)
+            res = cur.fetchall()
+            td = datetime.timedelta(hours=9)
+            for row in res:
+                row['end_date'] = (row['end_date'] + td).strftime("%Y-%m-%d %H:%M:%S")
+
+            return res 
+
+def read_setting(yaml_path):
+    with open(yaml_path,'r',encoding='utf-8') as f:       
+        return yaml.safe_load(f)
             
 def get_connection():
     return psycopg2.connect(database_url)
@@ -123,4 +157,3 @@ def get_connection():
 if __name__ == "__main__":
     # webサーバー立ち上げ
     app.run()
-
