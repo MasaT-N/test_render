@@ -239,6 +239,4 @@ if __name__ == "__main__":
     create_table()
     import uvicorn
     ENV_PORT = int(os.environ.get("PORT"))
-    uvicorn.run(app)
-    # ENV_PORT = int(os.environ.get("PORT"))
-    # uvicorn.run(app,host="0.0.0.0", port=ENV_PORT)
+    uvicorn.run(app,host="0.0.0.0", port=ENV_PORT)
