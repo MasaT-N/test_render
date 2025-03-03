@@ -46,7 +46,7 @@ SUBMIT_URL = config.get("SUBMIT_URL", "/submit")
 GET_DOCUMENT_LIST_URL = config.get("GET_DOCUMENT_LIST_URL", "/get_document_list")
 UPDATE_DOWNLOADED_URL = config.get("UPDATE_DOWNLOADED_URL", "/update_downloaded")
 INIT_DB_URL = "/init_db"
-DEFAULT_PORT = config.get("DEFAULT_PORT",10000)
+
 
 # Pydantic モデルの定義
 class User(BaseModel):
@@ -155,11 +155,6 @@ def check_secret_key(auth_data: AuthData):
         raise HTTPException(status_code=401, detail="Unauthorized")
     return auth_data
 
-# ファイルサイズをKB単位で取得する関数
-def get_file_size_in_kb(db_path)->str:
-    # PostgreSQLはファイルサイズでの取得ができないため固定値を返す。
-    return "N/A (PostgreSQL)"
-
 # POSTエンドポイントを定義
 @app.post(SUBMIT_URL, response_model=Dict)
 async def submit(data: Document):
@@ -237,11 +232,11 @@ async def index():
     cur.execute("SELECT COUNT(*) FROM purchase_requisition")
     total_count = cur.fetchone()[0]
     conn.close()
-    db_size = get_file_size_in_kb("")
-    return {"message": f"Service is Active. Total documents count: {total_count}. Database size: {db_size}"}
+
+    return {"message": f"Service is Active. Total documents count: {total_count}"}
 
 if __name__ == "__main__":
     create_table()
     import uvicorn
-    ENV_PORT = int(os.environ.get("PORT",DEFAULT_PORT))
+    ENV_PORT = int(os.environ.get("PORT"))
     uvicorn.run(app,host="0.0.0.0", port=ENV_PORT)
