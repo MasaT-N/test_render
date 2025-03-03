@@ -1,0 +1,6 @@
+DEFAULT_DAYS: 30
+ROOT_URL: "http://127.0.0.1:10000"
+SUBMIT_URL: "/submit"
+GET_DOCUMENT_LIST_URL: "/get_document_list"
+UPDATE_DOWNLOADED_URL: "/update_downloaded"
+DEFAULT_PORT: 10000
